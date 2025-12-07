@@ -47,8 +47,28 @@ const GameSave = sequelize.define("GameSave", {
 
 // 数据库初始化方法
 async function init() {
-  await Counter.sync({ alter: true });
-  await GameSave.sync({ alter: true }); // 同步新的存档表
+  try {
+    // 同步两个模型到数据库
+    await Counter.sync({ alter: true });
+    console.log('Counter 表同步成功');
+    
+    await GameSave.sync({ alter: true }); // 重点检查这里
+    console.log('GameSave 表同步成功');
+    
+  } catch (error) {
+    // 捕获并打印详细的错误信息
+    console.error('数据库表同步失败，错误详情:');
+    console.error('错误名称:', error.name);
+    console.error('错误信息:', error.message);
+    console.error('原始错误堆栈:', error);
+    
+    // 如果是Sequelize的验证错误，可以打印更多细节
+    if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeDatabaseError') {
+      console.error('SQL 相关错误详情:', error.parent?.sqlMessage || error.sql);
+    }
+    // 可以选择让进程退出，这样云托管会显示部署失败，便于发现问题
+    // process.exit(1);
+  }
 }
 
 // 导出初始化方法和模型
