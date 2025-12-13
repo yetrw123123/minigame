@@ -108,7 +108,7 @@ app.get("/api/load_data", async (req, res) => {
       });
     } else {
       // 没有找到存档，返回默认数据
-      const defaultData = { level: 1, score: 0, items: [] };
+      const defaultData = { gold: 100, instanceID: 0, items: [] };
       res.send({
         code: 0,
         message: "无存档，返回默认数据",
